@@ -1,22 +1,51 @@
-import './rrweb.min.js'
+console.log('react-scanner-client');
+import * as rrweb from 'rrweb';
+import CircularJSON from 'circular-json';
+import { uploadFile } from './uploadClass';
 
 // @ts-ignore
-console.log('rrweb', rrweb)
+window.getReactDomComponent = function (dom: any) {
+  console.log('getReactDomComponent', dom);
+  
+  // @ts-ignore
+  const internalInstance =
+  // @ts-ignore
+  dom[Object.keys(dom ?? {}).find((key) => key.startsWith('__react'))];
+  if (!internalInstance) return null;
+  return {
+    internalInstance,
+    props: internalInstance.memoizedProps,
+    state: internalInstance.memoizedState,
+  };
+};
 
-let events: any = [];
 
-// @ts-ignore
-const stop = rrweb.record({
-  emit(event: any) {
-    // push event into the events array
+const uploadIntervalMs = 5000; // Upload every 5 seconds
+// const workerEndpoint = "http://0.0.0.0:8787";
+const workerEndpoint = "https://upload-worker.react-scanner.workers.dev";
+
+async function initReactScannerClient({orgToken}: {orgToken: string}) {
+  const events: unknown[] = [];
+  
+  // Start recording events with rrweb
+  const stop = rrweb.record({
+    emit(event) {
       events.push(event);
-  },
-});
+    },
+  });
+  
+  const recordKey = crypto.randomUUID();
+  setInterval(async () => {
 
-setInterval(() => {
-  console.log({events});
-}, 1000)
+    let blob = new Blob([CircularJSON.stringify(events)], { type: "application/json" });
+    await uploadFile(blob, {recordKey, orgToken, workerEndpoint});
+      
+  }, uploadIntervalMs)
 
-export const add = (a: number, b: number) => {
-  return a + b
-}
+  // Stop recording events when the function is unloaded
+  return function () {
+    stop?.();
+  };
+};
+
+export default initReactScannerClient;
