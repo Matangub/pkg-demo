@@ -29,12 +29,24 @@ async function initReactScannerClient({orgToken}: {orgToken: string}) {
   
   // Start recording events with rrweb
   const stop = rrweb.record({
+    sampling: {
+    // do not record mouse movement
+    mousemove: false,
+    // do not record mouse interaction
+    // mouseInteraction: false,
+    // set the interval of scrolling event
+    scroll: 150, // do not emit twice in 150ms
+    // set the interval of media interaction event
+    media: 800,
+    // set the timing of record input
+    input: 'last', // When input mulitple characters, only record the final input
+  },
     emit(event) {
       events.push(event);
     },
   });
   
-  const recordKey = crypto.randomUUID();
+  const recordKey = `${crypto.randomUUID()}.json`;
   setInterval(async () => {
 
     let blob = new Blob([CircularJSON.stringify(events)], { type: "application/json" });

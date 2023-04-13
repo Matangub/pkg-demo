@@ -2,4 +2,4 @@
 "react-scanner-client": patch
 ---
 
-Added the rrweb library as a script 23
+Added suffix .json to records 28
