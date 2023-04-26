@@ -1,13 +1,13 @@
 {
   "name": "react-scanner-client",
   "license": "MIT",
-  "version": "0.2.8",
+  "version": "3.0.4",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup index.ts --format cjs,esm --dts",
-    "release": "pnpm run build && changeset publish",
+    "release": "npm run build && changeset publish",
     "postinstall": "patch-package",
     "lint": "tsc"
   },
@@ -26,6 +26,6 @@
     "postinstall-postinstall": "^2.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rrweb": "https://github.com/Matangub/rrweb/raw/rrweb-react/packages/rrweb/rrweb-v2.0.0-alpha.7.tgz"
+    "rrweb": "https://github.com/Matangub/rrweb/raw/rrweb-react/packages/rrweb/rrweb-v2.0.0-alpha.8.tgz"
   }
 }
